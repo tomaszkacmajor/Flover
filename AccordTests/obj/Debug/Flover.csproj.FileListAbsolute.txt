@@ -1,0 +1,2 @@
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\bin\Debug\Flover.exe.config
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\bin\Debug\AccordTests.exe.config

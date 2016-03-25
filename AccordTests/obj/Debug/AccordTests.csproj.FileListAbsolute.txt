@@ -1,0 +1,31 @@
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\bin\Debug\AccordTests.exe.config
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\bin\Debug\AccordTests.exe
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\bin\Debug\AccordTests.pdb
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\obj\Debug\AccordTests.csprojResolveAssemblyReference.cache
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\obj\Debug\AccordTests.Properties.Resources.resources
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\obj\Debug\AccordTests.csproj.GenerateResource.Cache
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\obj\Debug\AccordTests.exe
+d:\dokumenty\visual studio 2015\Projects\Flover\Flover\obj\Debug\AccordTests.pdb
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\AccordTests.exe.config
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\obj\Debug\AccordTests.exe
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\obj\Debug\AccordTests.pdb
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.dll.config
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\AccordTests.exe
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\AccordTests.pdb
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.dll
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.Imaging.dll
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.MachineLearning.dll
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.Math.dll
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.Statistics.dll
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.xml
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.Imaging.xml
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.MachineLearning.xml
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.Math.xml
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\bin\Debug\Accord.Statistics.xml
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\obj\Debug\AccordTests.csprojResolveAssemblyReference.cache
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\obj\Debug\AccordTests.Properties.Resources.resources
+D:\Dokumenty\Visual Studio 2015\Projects\Flover\AccordTests\obj\Debug\AccordTests.csproj.GenerateResource.Cache
+d:\dokumenty\visual studio 2015\Projects\Flover\AccordTests\obj\Debug\AccordTests.MainForm.resources
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\AccordTests.exe.config
+D:\ProggBlogg\Flover\AccordTests\obj\Debug\AccordTests.exe
+D:\ProggBlogg\Flover\AccordTests\obj\Debug\AccordTests.pdb
