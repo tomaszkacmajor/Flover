@@ -1,10 +1,10 @@
-﻿using System.IO;
-
-namespace FloverWebApp.Models
+﻿namespace FloverWebApp.Models
 {
     public class MainModel
     {
-        public string ImagePath = "";
-        public string ImageFilename => Path.GetFileName(ImagePath);
+        public string ImagePath { get; set; }
+        public string ImageFileName { get; set; }
     }
 }
+
+

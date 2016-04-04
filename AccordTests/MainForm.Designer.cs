@@ -40,6 +40,13 @@
             this.surfCornerDetectionGroupBox = new System.Windows.Forms.GroupBox();
             this.surfDetectCornersBtn = new System.Windows.Forms.Button();
             this.surfDetectCornersThreshTrackBar = new System.Windows.Forms.TrackBar();
+            this.meanShiftBtn = new System.Windows.Forms.Button();
+            this.resultImagePictureBox = new System.Windows.Forms.PictureBox();
+            this.meanShiftSigmaTrackBar = new System.Windows.Forms.TrackBar();
+            this.kMeansBtn = new System.Windows.Forms.Button();
+            this.kMeansKTrackBar = new System.Windows.Forms.TrackBar();
+            this.SLICBtn = new System.Windows.Forms.Button();
+            this.SLICTrackBar = new System.Windows.Forms.TrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.workingImagePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fastDetectCornersThreshTrackBar)).BeginInit();
             this.fastCornerDetectionGroupBox.SuspendLayout();
@@ -47,13 +54,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.harrisDetectCornersThreshTrackBar)).BeginInit();
             this.surfCornerDetectionGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.surfDetectCornersThreshTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resultImagePictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.meanShiftSigmaTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kMeansKTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SLICTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // workingImagePictureBox
             // 
             this.workingImagePictureBox.Location = new System.Drawing.Point(168, 14);
             this.workingImagePictureBox.Name = "workingImagePictureBox";
-            this.workingImagePictureBox.Size = new System.Drawing.Size(707, 530);
+            this.workingImagePictureBox.Size = new System.Drawing.Size(463, 398);
             this.workingImagePictureBox.TabIndex = 0;
             this.workingImagePictureBox.TabStop = false;
             // 
@@ -156,18 +167,91 @@
             this.surfDetectCornersThreshTrackBar.TabIndex = 3;
             this.surfDetectCornersThreshTrackBar.Value = 2;
             // 
-            // Form1
+            // meanShiftBtn
+            // 
+            this.meanShiftBtn.Location = new System.Drawing.Point(21, 386);
+            this.meanShiftBtn.Name = "meanShiftBtn";
+            this.meanShiftBtn.Size = new System.Drawing.Size(117, 26);
+            this.meanShiftBtn.TabIndex = 7;
+            this.meanShiftBtn.Text = "MeanShift";
+            this.meanShiftBtn.UseVisualStyleBackColor = true;
+            this.meanShiftBtn.Click += new System.EventHandler(this.meanShiftBtn_Click);
+            // 
+            // resultImagePictureBox
+            // 
+            this.resultImagePictureBox.Location = new System.Drawing.Point(655, 14);
+            this.resultImagePictureBox.Name = "resultImagePictureBox";
+            this.resultImagePictureBox.Size = new System.Drawing.Size(463, 398);
+            this.resultImagePictureBox.TabIndex = 8;
+            this.resultImagePictureBox.TabStop = false;
+            // 
+            // meanShiftSigmaTrackBar
+            // 
+            this.meanShiftSigmaTrackBar.Location = new System.Drawing.Point(21, 418);
+            this.meanShiftSigmaTrackBar.Maximum = 1000;
+            this.meanShiftSigmaTrackBar.Name = "meanShiftSigmaTrackBar";
+            this.meanShiftSigmaTrackBar.Size = new System.Drawing.Size(117, 45);
+            this.meanShiftSigmaTrackBar.TabIndex = 9;
+            this.meanShiftSigmaTrackBar.Value = 2;
+            // 
+            // kMeansBtn
+            // 
+            this.kMeansBtn.Location = new System.Drawing.Point(21, 456);
+            this.kMeansBtn.Name = "kMeansBtn";
+            this.kMeansBtn.Size = new System.Drawing.Size(117, 26);
+            this.kMeansBtn.TabIndex = 10;
+            this.kMeansBtn.Text = "K-means";
+            this.kMeansBtn.UseVisualStyleBackColor = true;
+            this.kMeansBtn.Click += new System.EventHandler(this.kMeansBtn_Click);
+            // 
+            // kMeansKTrackBar
+            // 
+            this.kMeansKTrackBar.Location = new System.Drawing.Point(21, 488);
+            this.kMeansKTrackBar.Maximum = 200;
+            this.kMeansKTrackBar.Name = "kMeansKTrackBar";
+            this.kMeansKTrackBar.Size = new System.Drawing.Size(117, 45);
+            this.kMeansKTrackBar.TabIndex = 11;
+            this.kMeansKTrackBar.Value = 50;
+            // 
+            // SLICBtn
+            // 
+            this.SLICBtn.Location = new System.Drawing.Point(21, 524);
+            this.SLICBtn.Name = "SLICBtn";
+            this.SLICBtn.Size = new System.Drawing.Size(117, 26);
+            this.SLICBtn.TabIndex = 13;
+            this.SLICBtn.Text = "SLIC";
+            this.SLICBtn.UseVisualStyleBackColor = true;
+            this.SLICBtn.Click += new System.EventHandler(this.SLICBtn_Click);
+            // 
+            // SLICTrackBar
+            // 
+            this.SLICTrackBar.LargeChange = 50;
+            this.SLICTrackBar.Location = new System.Drawing.Point(21, 556);
+            this.SLICTrackBar.Maximum = 200;
+            this.SLICTrackBar.Name = "SLICTrackBar";
+            this.SLICTrackBar.Size = new System.Drawing.Size(117, 45);
+            this.SLICTrackBar.TabIndex = 14;
+            this.SLICTrackBar.Value = 50;
+            // 
+            // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(888, 583);
+            this.ClientSize = new System.Drawing.Size(1210, 607);
+            this.Controls.Add(this.SLICTrackBar);
+            this.Controls.Add(this.SLICBtn);
+            this.Controls.Add(this.kMeansKTrackBar);
+            this.Controls.Add(this.kMeansBtn);
+            this.Controls.Add(this.meanShiftSigmaTrackBar);
+            this.Controls.Add(this.resultImagePictureBox);
+            this.Controls.Add(this.meanShiftBtn);
             this.Controls.Add(this.surfCornerDetectionGroupBox);
             this.Controls.Add(this.harrisCornerDetectionGroupBox);
             this.Controls.Add(this.fastCornerDetectionGroupBox);
             this.Controls.Add(this.loadPictureBtn);
             this.Controls.Add(this.workingImagePictureBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Form1";
+            this.Name = "MainForm";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.workingImagePictureBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.fastDetectCornersThreshTrackBar)).EndInit();
@@ -179,7 +263,12 @@
             this.surfCornerDetectionGroupBox.ResumeLayout(false);
             this.surfCornerDetectionGroupBox.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.surfDetectCornersThreshTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.resultImagePictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.meanShiftSigmaTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kMeansKTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SLICTrackBar)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -196,6 +285,13 @@
         private System.Windows.Forms.GroupBox surfCornerDetectionGroupBox;
         private System.Windows.Forms.Button surfDetectCornersBtn;
         private System.Windows.Forms.TrackBar surfDetectCornersThreshTrackBar;
+        private System.Windows.Forms.Button meanShiftBtn;
+        private System.Windows.Forms.PictureBox resultImagePictureBox;
+        private System.Windows.Forms.TrackBar meanShiftSigmaTrackBar;
+        private System.Windows.Forms.Button kMeansBtn;
+        private System.Windows.Forms.TrackBar kMeansKTrackBar;
+        private System.Windows.Forms.Button SLICBtn;
+        private System.Windows.Forms.TrackBar SLICTrackBar;
     }
 }
 

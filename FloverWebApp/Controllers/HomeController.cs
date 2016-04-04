@@ -1,40 +1,4 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Threading.Tasks;
-//using Microsoft.AspNet.Mvc;
-
-//namespace FloverWebApp.Controllers
-//{
-//    public class HomeController : Controller
-//    {
-//        public IActionResult Index()
-//        {
-//            return View();
-//        }
-
-//        public IActionResult About()
-//        {
-//            ViewData["Message"] = "Your application description page.";
-
-//            return View();
-//        }
-
-//        public IActionResult Contact()
-//        {
-//            ViewData["Message"] = "Your contact page.";
-
-//            return View();
-//        }
-
-//        public IActionResult Error()
-//        {
-//            return View();
-//        }
-//    }
-//}
-
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
@@ -46,55 +10,62 @@ namespace FloverWebApp.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly IHostingEnvironment hostingEnvironment;
+        private readonly MainModel model;
+
+        public HomeController(IHostingEnvironment hostingEnvironment)
+        {
+            this.hostingEnvironment = hostingEnvironment;
+            model = new MainModel();
+        }
+
         public IActionResult Index()
         {
-            return View(new MainModel());
+            return View(model);
         }
 
         public IActionResult About()
         {
             ViewData["Message"] = "Your application description page.";
 
-            return View(new MainModel());
+            return View(model);
         }
 
         public IActionResult Contact()
         {
             ViewData["Message"] = "Your contact page.";
 
-            return View(new MainModel());
+            return View(model);
         }
 
         public IActionResult Error()
         {
-            return View(new MainModel());
+            return View(model);
         }
-
-        private IHostingEnvironment _environment;
-
-        public HomeController(IHostingEnvironment environment)
-        {
-            _environment = environment;
-        }
-
 
         [HttpPost]
-        public async Task<IActionResult> Index(IFormFile file)
+        public  ActionResult Index(IFormFile file)
         {
-            string uploads = Path.Combine(_environment.WebRootPath, "uploads");
-            MainModel model = new MainModel();
+            string uploadPath = Path.Combine(hostingEnvironment.WebRootPath, "uploads");
 
             if (file.Length > 0)
             {
                 string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                string filePath = Path.Combine(uploads, fileName);
-                await file.SaveAsAsync(filePath);
-
+                string filePath = Path.Combine(uploadPath, fileName);
+                file.SaveAs(filePath);
 
                 model.ImagePath = filePath;
+                model.ImageFileName = fileName;
             }
-
             return View(model);
         }
+
+
     }
 }
+
+
+
+
+
+
