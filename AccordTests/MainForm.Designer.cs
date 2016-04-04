@@ -47,6 +47,7 @@
             this.kMeansKTrackBar = new System.Windows.Forms.TrackBar();
             this.SLICBtn = new System.Windows.Forms.Button();
             this.SLICTrackBar = new System.Windows.Forms.TrackBar();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)(this.workingImagePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fastDetectCornersThreshTrackBar)).BeginInit();
             this.fastCornerDetectionGroupBox.SuspendLayout();
@@ -58,6 +59,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.meanShiftSigmaTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.kMeansKTrackBar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SLICTrackBar)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // workingImagePictureBox
@@ -169,7 +171,7 @@
             // 
             // meanShiftBtn
             // 
-            this.meanShiftBtn.Location = new System.Drawing.Point(21, 386);
+            this.meanShiftBtn.Location = new System.Drawing.Point(6, 19);
             this.meanShiftBtn.Name = "meanShiftBtn";
             this.meanShiftBtn.Size = new System.Drawing.Size(117, 26);
             this.meanShiftBtn.TabIndex = 7;
@@ -187,7 +189,7 @@
             // 
             // meanShiftSigmaTrackBar
             // 
-            this.meanShiftSigmaTrackBar.Location = new System.Drawing.Point(21, 418);
+            this.meanShiftSigmaTrackBar.Location = new System.Drawing.Point(6, 51);
             this.meanShiftSigmaTrackBar.Maximum = 1000;
             this.meanShiftSigmaTrackBar.Name = "meanShiftSigmaTrackBar";
             this.meanShiftSigmaTrackBar.Size = new System.Drawing.Size(117, 45);
@@ -196,7 +198,7 @@
             // 
             // kMeansBtn
             // 
-            this.kMeansBtn.Location = new System.Drawing.Point(21, 456);
+            this.kMeansBtn.Location = new System.Drawing.Point(6, 89);
             this.kMeansBtn.Name = "kMeansBtn";
             this.kMeansBtn.Size = new System.Drawing.Size(117, 26);
             this.kMeansBtn.TabIndex = 10;
@@ -206,7 +208,7 @@
             // 
             // kMeansKTrackBar
             // 
-            this.kMeansKTrackBar.Location = new System.Drawing.Point(21, 488);
+            this.kMeansKTrackBar.Location = new System.Drawing.Point(6, 121);
             this.kMeansKTrackBar.Maximum = 200;
             this.kMeansKTrackBar.Name = "kMeansKTrackBar";
             this.kMeansKTrackBar.Size = new System.Drawing.Size(117, 45);
@@ -215,7 +217,7 @@
             // 
             // SLICBtn
             // 
-            this.SLICBtn.Location = new System.Drawing.Point(21, 524);
+            this.SLICBtn.Location = new System.Drawing.Point(6, 157);
             this.SLICBtn.Name = "SLICBtn";
             this.SLICBtn.Size = new System.Drawing.Size(117, 26);
             this.SLICBtn.TabIndex = 13;
@@ -226,25 +228,35 @@
             // SLICTrackBar
             // 
             this.SLICTrackBar.LargeChange = 50;
-            this.SLICTrackBar.Location = new System.Drawing.Point(21, 556);
+            this.SLICTrackBar.Location = new System.Drawing.Point(6, 189);
             this.SLICTrackBar.Maximum = 200;
             this.SLICTrackBar.Name = "SLICTrackBar";
             this.SLICTrackBar.Size = new System.Drawing.Size(117, 45);
             this.SLICTrackBar.TabIndex = 14;
             this.SLICTrackBar.Value = 50;
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.kMeansBtn);
+            this.groupBox1.Controls.Add(this.meanShiftBtn);
+            this.groupBox1.Controls.Add(this.SLICTrackBar);
+            this.groupBox1.Controls.Add(this.meanShiftSigmaTrackBar);
+            this.groupBox1.Controls.Add(this.SLICBtn);
+            this.groupBox1.Controls.Add(this.kMeansKTrackBar);
+            this.groupBox1.Location = new System.Drawing.Point(12, 386);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(136, 240);
+            this.groupBox1.TabIndex = 15;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Segmentation";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1210, 607);
-            this.Controls.Add(this.SLICTrackBar);
-            this.Controls.Add(this.SLICBtn);
-            this.Controls.Add(this.kMeansKTrackBar);
-            this.Controls.Add(this.kMeansBtn);
-            this.Controls.Add(this.meanShiftSigmaTrackBar);
+            this.ClientSize = new System.Drawing.Size(1210, 630);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.resultImagePictureBox);
-            this.Controls.Add(this.meanShiftBtn);
             this.Controls.Add(this.surfCornerDetectionGroupBox);
             this.Controls.Add(this.harrisCornerDetectionGroupBox);
             this.Controls.Add(this.fastCornerDetectionGroupBox);
@@ -267,8 +279,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.meanShiftSigmaTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.kMeansKTrackBar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SLICTrackBar)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -292,6 +305,7 @@
         private System.Windows.Forms.TrackBar kMeansKTrackBar;
         private System.Windows.Forms.Button SLICBtn;
         private System.Windows.Forms.TrackBar SLICTrackBar;
+        private System.Windows.Forms.GroupBox groupBox1;
     }
 }
 
