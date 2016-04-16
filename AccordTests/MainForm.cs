@@ -9,6 +9,9 @@ using Accord.MachineLearning;
 using Accord.Math;
 using Accord.Statistics.Distributions.DensityKernels;
 using AForge.Imaging.Filters;
+using System.IO.Compression;
+using AForge.Imaging;
+using AccordTests.SLIC;
 
 namespace AccordTests
 {
@@ -29,7 +32,39 @@ namespace AccordTests
             openFileDialog.ShowDialog();
 
             string imageFileName = openFileDialog.FileName;
-            image = new Bitmap(imageFileName);
+            Bitmap loadedImage = new Bitmap(imageFileName);
+
+            int imageMaxSize = 500;
+            int newHeight;
+            int newWidth;
+            if (loadedImage.Width > imageMaxSize || loadedImage.Height > imageMaxSize)
+            {
+                double imageRatio = (double)loadedImage.Width / loadedImage.Height;
+                if (loadedImage.Width > loadedImage.Height)
+                {
+                    newWidth = imageMaxSize;
+                    newHeight = (int)((double)imageMaxSize / imageRatio);
+                }
+                else
+                {
+                    newHeight = imageMaxSize;
+                    newWidth = (int)((double)imageMaxSize * imageRatio);
+                }
+
+                UnmanagedImage unmanagedImage = UnmanagedImage.FromManagedImage(loadedImage);
+
+                ResizeBicubic resizeFilter = new ResizeBicubic(newWidth, newHeight);
+                // ResizeBicubic resizeFilter = new ResizeBicubic(500, 500);
+                UnmanagedImage tempImage = resizeFilter.Apply(unmanagedImage);
+
+                image = tempImage.ToManagedImage();
+
+            }
+            else
+            {
+                image = loadedImage;
+            }
+
             workingImagePictureBox.Image = image;
         }
 
@@ -148,8 +183,21 @@ namespace AccordTests
   
         private void SLICBtn_Click(object sender, EventArgs e)
         {
-            SLIC slic = new SLIC(SLICTrackBar.Value, 5, ColorSpaceType.Lab);
+            SLICMethod slic = new SLICMethod(SLICTrackBar.Value, spatialConsTrackBar.Value, ColorSpaceType.Lab);
+            slic.ShowEdges = applyEdgesChkBox.Checked;
+            slic.ShowRandomColorSegments = randomColorSegmentsChkBox.Checked;
+
             resultImagePictureBox.Image = slic.Segment(image);
+        }
+
+        private void spatialConsTrackBar_Scroll(object sender, EventArgs e)
+        {
+            spatialConsistencyLabel.Text = spatialConsTrackBar.Value.ToString();
+        }
+
+        private void SLICTrackBar_Scroll(object sender, EventArgs e)
+        {
+            noSegmentsLabel.Text = SLICTrackBar.Value.ToString();
         }
     }
 }

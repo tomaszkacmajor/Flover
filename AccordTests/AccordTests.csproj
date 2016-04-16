@@ -72,6 +72,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SLIC\IPixels5DimConverter.cs" />
+    <Compile Include="SLIC\KMeansSLIC.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,7 +82,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SLIC.cs" />
+    <Compile Include="SLIC\Pixels5DimConverterLabSpace.cs" />
+    <Compile Include="SLIC\Pixels5DimConverterRgbSpace.cs" />
+    <Compile Include="SLIC\SLICMethod.cs" />
+    <Compile Include="Utils.cs" />
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
