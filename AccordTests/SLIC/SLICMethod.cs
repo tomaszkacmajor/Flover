@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System;
+using ColorMine.ColorSpaces;
 
 namespace AccordTests.SLIC
 {
@@ -7,15 +8,7 @@ namespace AccordTests.SLIC
 
     class SLICMethod
     {
-        public const int L_minVal = 0;
-        public const int L_maxVal = 100;
-        public const int A_minVal = -128;
-        public const int A_maxVal = 128;
-        public const int B_minVal = -128;
-        public const int B_maxVal = 128;
-
-        public const int RGB_minVal = 0;
-        public const int RGB_maxVal = 256;
+      
 
         // parametry metody SLIC
         private readonly int noClusters;
@@ -27,11 +20,17 @@ namespace AccordTests.SLIC
         public bool ShowEdges = true;
         public bool ShowRandomColorSegments = false;
 
+        public Pixel[,] Pixels;
+        public Segment[] Segments;
+
         public SLICMethod(int noClusters, int spatialConsistency, ColorSpaceType colorSpace)
         {
             this.noClusters = noClusters;
             this.spatialConsistency = spatialConsistency;
             this.colorSpace = colorSpace;
+
+            Segments = new Segment[noClusters];
+           
         }
 
         public Bitmap Segment(Bitmap image)
@@ -42,6 +41,10 @@ namespace AccordTests.SLIC
             // Konwersja obrazu do tablicy pikseli o wymiarach: ilość pikseli x (3 składowe RGB + 2 składowe położenia)
             IPixels5DimConverter converter = GetPixels5DimConverter();
             var pixels5dim = converter.GetPixels(image);
+
+            Pixels5DimConverterRgbSpace rgbConverter = new Pixels5DimConverterRgbSpace();
+            Pixels = rgbConverter.GetPixels2(image); 
+
 
             // konstrukcja algorytmu k-means do wyznaczenia segmentów 
             // używając przy tym metryki euklidesowej
@@ -63,6 +66,9 @@ namespace AccordTests.SLIC
             // zamiana każdego piksela na odpowiadające mu centrum segmentu
             pixels5dim = pixels5dim.Apply((x, i) => kmeans.Clusters.Centroids[idx[i]]);
 
+            SetSegmentInfoToPixels(idx);
+            SetSegments(kmeans.Clusters.Centroids);
+
             if (ShowRandomColorSegments)
                 ColorSegments(ref pixels5dim, idx, noClusters);
             if (ShowEdges)
@@ -72,6 +78,76 @@ namespace AccordTests.SLIC
             return converter.GetImage(pixels5dim, image.Height, image.Width);
         }
 
+        void SetSegmentInfoToPixels(int[] idx)
+        {
+            for (int i = 0; i < imageHeight; i++)
+            {
+                for (int j = 0; j < imageWidth; j++)
+                {
+                    int ind = Utils.GetJaggedArrInd(i, j, imageWidth);
+                    Pixels[i, j].SegmentInd = idx[ind];
+                }
+            }
+        }
+
+        void SetSegments(double[][] centroids)
+        {
+            for (int i = 0; i < centroids.Length; i++)
+            {
+                double[] centroid = centroids[i];
+
+                int R = (int)centroid[0];
+                int G = (int)centroid[1];
+                int B = (int)centroid[2];
+                int X = (int)centroid[3];
+                int Y = (int)centroid[4];
+
+                if (colorSpace == ColorSpaceType.Lab)
+                {
+                    var myLab = new Lab { L = centroid[0], A = centroid[1], B = centroid[2] };
+                    var myRgb = myLab.To<Rgb>();
+
+                    R = (int)myRgb.R;
+                    G = (int)myRgb.G;
+                    B = (int)myRgb.B;
+                }
+
+                
+               
+
+                MyRGB color = new MyRGB(R, G, B);
+                Point point = new Point(X, Y);
+
+                Segments[i] = new Segment(color, point);
+            }
+
+            int[] count = new int[centroids.Length];
+
+            for (int i = 0; i < imageHeight; i++)
+            {
+                for (int j = 0; j < imageWidth; j++)
+                {
+                    count[Pixels[i, j].SegmentInd]++;
+                }
+            }
+
+            for (int i = 0; i < centroids.Length; i++)
+            {
+                Segments[i].CreatePixelsArr(count[i]);
+            }
+
+            for (int i = 0; i < imageHeight; i++)
+            {
+                for (int j = 0; j < imageWidth; j++)
+                {
+                    int segmentInd = Pixels[i, j].SegmentInd;
+                    int pixInd = Segments[segmentInd].currPixInd;
+                    Segments[segmentInd].Pixels[pixInd] = Pixels[i,j];
+                    Segments[segmentInd].currPixInd++;
+                }
+            }
+
+        }
 
         private void ColorSegments(ref double[][] pixels, int[] labels, int noSegments)
         {
@@ -102,17 +178,17 @@ namespace AccordTests.SLIC
         private void ApplyEdges(ref double[][] pixels, int[] labels)
         {
             bool[,] pixelTaken = new bool[imageHeight, imageWidth];
-            myPoint[] neighbours8 = new myPoint[8];
-            neighbours8[0] = new myPoint(-1, -1);
-            neighbours8[1] = new myPoint(-1, 0);
-            neighbours8[2] = new myPoint(-1, 1);
-            neighbours8[3] = new myPoint(0, -1);
-            neighbours8[4] = new myPoint(0, 1);
-            neighbours8[5] = new myPoint(1, -1);
-            neighbours8[6] = new myPoint(1, 0);
-            neighbours8[7] = new myPoint(1, 1);
+            Point[] neighbours8 = new Point[8];
+            neighbours8[0] = new Point(-1, -1);
+            neighbours8[1] = new Point(-1, 0);
+            neighbours8[2] = new Point(-1, 1);
+            neighbours8[3] = new Point(0, -1);
+            neighbours8[4] = new Point(0, 1);
+            neighbours8[5] = new Point(1, -1);
+            neighbours8[6] = new Point(1, 0);
+            neighbours8[7] = new Point(1, 1);
 
-
+            
             for (int i = 0; i < imageHeight; i++)
             {
                 for (int j = 0; j < imageWidth; j++)
@@ -153,25 +229,13 @@ namespace AccordTests.SLIC
         IPixels5DimConverter GetPixels5DimConverter()
         {
             if (colorSpace == ColorSpaceType.Rgb)
-                return new Pixels5DimConverterRgbSpace(spatialConsistency);
+                return new Pixels5DimConverterRgbSpace();
             else
-                return new Pixels5DimConverterLabSpace(spatialConsistency);
+                return new Pixels5DimConverterLabSpace();
 
         }
     }
-
-    class myPoint
-    {
-        public int X;
-        public int Y;
-
-        public myPoint(int X, int Y)
-        {
-            this.X = X;
-            this.Y = Y;
-        }
-
-    }
+    
 
 }
 

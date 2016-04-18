@@ -6,13 +6,7 @@ namespace AccordTests.SLIC
 {
     class Pixels5DimConverterLabSpace : IPixels5DimConverter
     {
-        private readonly int spatialConsistency;
-
-        public Pixels5DimConverterLabSpace(int spatialConsistency)
-        {
-            this.spatialConsistency = spatialConsistency;
-        }
-
+      
         public double[][] GetPixels(Bitmap image)
         {
             int imageHeight = image.Height;
@@ -68,9 +62,9 @@ namespace AccordTests.SLIC
 
                 double[] temp = new double[3];
 
-                temp[0] = Utils.GetScaledValue(myRgb.R, SLICMethod.RGB_minVal, SLICMethod.RGB_maxVal);
-                temp[1] = Utils.GetScaledValue(myRgb.G, SLICMethod.RGB_minVal, SLICMethod.RGB_maxVal);
-                temp[2] = Utils.GetScaledValue(myRgb.B, SLICMethod.RGB_minVal, SLICMethod.RGB_maxVal);
+                temp[0] = Utils.GetScaledValue(myRgb.R, Utils.RGB_minVal, Utils.RGB_maxVal);
+                temp[1] = Utils.GetScaledValue(myRgb.G, Utils.RGB_minVal, Utils.RGB_maxVal);
+                temp[2] = Utils.GetScaledValue(myRgb.B, Utils.RGB_minVal, Utils.RGB_maxVal);
 
                 outPixels[i] = temp;
             }

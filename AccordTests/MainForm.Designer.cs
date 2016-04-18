@@ -56,6 +56,23 @@
             this.label1 = new System.Windows.Forms.Label();
             this.applyEdgesChkBox = new System.Windows.Forms.CheckBox();
             this.randomColorSegmentsChkBox = new System.Windows.Forms.CheckBox();
+            this.loadTrimapBtn = new System.Windows.Forms.Button();
+            this.applyTrimapBtn = new System.Windows.Forms.Button();
+            this.trainClassifierBtn = new System.Windows.Forms.Button();
+            this.SegmentFGBGBtn = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.LearnErrLabel = new System.Windows.Forms.Label();
+            this.FGBGErrorLabel = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button7 = new System.Windows.Forms.Button();
+            this.TestErrLabel = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.workingImagePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fastDetectCornersThreshTrackBar)).BeginInit();
             this.fastCornerDetectionGroupBox.SuspendLayout();
@@ -76,7 +93,7 @@
             // 
             this.workingImagePictureBox.Location = new System.Drawing.Point(168, 14);
             this.workingImagePictureBox.Name = "workingImagePictureBox";
-            this.workingImagePictureBox.Size = new System.Drawing.Size(500, 500);
+            this.workingImagePictureBox.Size = new System.Drawing.Size(739, 554);
             this.workingImagePictureBox.TabIndex = 0;
             this.workingImagePictureBox.TabStop = false;
             // 
@@ -191,9 +208,9 @@
             // 
             // resultImagePictureBox
             // 
-            this.resultImagePictureBox.Location = new System.Drawing.Point(674, 14);
+            this.resultImagePictureBox.Location = new System.Drawing.Point(913, 14);
             this.resultImagePictureBox.Name = "resultImagePictureBox";
-            this.resultImagePictureBox.Size = new System.Drawing.Size(500, 500);
+            this.resultImagePictureBox.Size = new System.Drawing.Size(739, 554);
             this.resultImagePictureBox.TabIndex = 8;
             this.resultImagePictureBox.TabStop = false;
             // 
@@ -243,7 +260,7 @@
             this.SLICTrackBar.Name = "SLICTrackBar";
             this.SLICTrackBar.Size = new System.Drawing.Size(85, 45);
             this.SLICTrackBar.TabIndex = 14;
-            this.SLICTrackBar.Value = 50;
+            this.SLICTrackBar.Value = 200;
             this.SLICTrackBar.Scroll += new System.EventHandler(this.SLICTrackBar_Scroll);
             // 
             // groupBox1
@@ -279,14 +296,14 @@
             // 
             // spatialConsTrackBar
             // 
-            this.spatialConsTrackBar.LargeChange = 50;
+            this.spatialConsTrackBar.LargeChange = 10;
             this.spatialConsTrackBar.Location = new System.Drawing.Point(141, 42);
             this.spatialConsTrackBar.Maximum = 60;
             this.spatialConsTrackBar.Minimum = 1;
             this.spatialConsTrackBar.Name = "spatialConsTrackBar";
             this.spatialConsTrackBar.Size = new System.Drawing.Size(87, 45);
             this.spatialConsTrackBar.TabIndex = 18;
-            this.spatialConsTrackBar.Value = 5;
+            this.spatialConsTrackBar.Value = 50;
             this.spatialConsTrackBar.Scroll += new System.EventHandler(this.spatialConsTrackBar_Scroll);
             // 
             // spatialConsistencyLabel
@@ -294,9 +311,9 @@
             this.spatialConsistencyLabel.AutoSize = true;
             this.spatialConsistencyLabel.Location = new System.Drawing.Point(122, 53);
             this.spatialConsistencyLabel.Name = "spatialConsistencyLabel";
-            this.spatialConsistencyLabel.Size = new System.Drawing.Size(13, 13);
+            this.spatialConsistencyLabel.Size = new System.Drawing.Size(19, 13);
             this.spatialConsistencyLabel.TabIndex = 22;
-            this.spatialConsistencyLabel.Text = "5";
+            this.spatialConsistencyLabel.Text = "50";
             // 
             // label3
             // 
@@ -345,11 +362,192 @@
             this.randomColorSegmentsChkBox.Text = "Random Color Segments";
             this.randomColorSegmentsChkBox.UseVisualStyleBackColor = true;
             // 
+            // loadTrimapBtn
+            // 
+            this.loadTrimapBtn.Location = new System.Drawing.Point(262, 574);
+            this.loadTrimapBtn.Name = "loadTrimapBtn";
+            this.loadTrimapBtn.Size = new System.Drawing.Size(103, 27);
+            this.loadTrimapBtn.TabIndex = 25;
+            this.loadTrimapBtn.Text = "Load trimap...";
+            this.loadTrimapBtn.UseVisualStyleBackColor = true;
+            this.loadTrimapBtn.Click += new System.EventHandler(this.loadTrimapBtn_Click);
+            // 
+            // applyTrimapBtn
+            // 
+            this.applyTrimapBtn.Location = new System.Drawing.Point(262, 622);
+            this.applyTrimapBtn.Name = "applyTrimapBtn";
+            this.applyTrimapBtn.Size = new System.Drawing.Size(103, 37);
+            this.applyTrimapBtn.TabIndex = 26;
+            this.applyTrimapBtn.Text = "Apply trimap to segmented iamge";
+            this.applyTrimapBtn.UseVisualStyleBackColor = true;
+            this.applyTrimapBtn.Click += new System.EventHandler(this.applyTrimapBtn_Click);
+            // 
+            // trainClassifierBtn
+            // 
+            this.trainClassifierBtn.Location = new System.Drawing.Point(262, 661);
+            this.trainClassifierBtn.Name = "trainClassifierBtn";
+            this.trainClassifierBtn.Size = new System.Drawing.Size(103, 27);
+            this.trainClassifierBtn.TabIndex = 27;
+            this.trainClassifierBtn.Text = "Train classifier";
+            this.trainClassifierBtn.UseVisualStyleBackColor = true;
+            this.trainClassifierBtn.Click += new System.EventHandler(this.trainClassifierBtn_Click);
+            // 
+            // SegmentFGBGBtn
+            // 
+            this.SegmentFGBGBtn.Location = new System.Drawing.Point(388, 575);
+            this.SegmentFGBGBtn.Name = "SegmentFGBGBtn";
+            this.SegmentFGBGBtn.Size = new System.Drawing.Size(103, 27);
+            this.SegmentFGBGBtn.TabIndex = 28;
+            this.SegmentFGBGBtn.Text = "Segment FG/BG";
+            this.SegmentFGBGBtn.UseVisualStyleBackColor = true;
+            this.SegmentFGBGBtn.Click += new System.EventHandler(this.SegmentFGBGBtn_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(571, 574);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(117, 27);
+            this.button1.TabIndex = 29;
+            this.button1.Text = "Load pictures...";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(571, 633);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(117, 26);
+            this.button2.TabIndex = 30;
+            this.button2.Text = "Segment All";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(571, 603);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(117, 27);
+            this.button3.TabIndex = 31;
+            this.button3.Text = "Load trimaps...";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(571, 660);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(117, 27);
+            this.button4.TabIndex = 32;
+            this.button4.Text = "Train All";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(568, 690);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(53, 13);
+            this.label2.TabIndex = 23;
+            this.label2.Text = "Learn Err.";
+            // 
+            // LearnErrLabel
+            // 
+            this.LearnErrLabel.AutoSize = true;
+            this.LearnErrLabel.Location = new System.Drawing.Point(627, 690);
+            this.LearnErrLabel.Name = "LearnErrLabel";
+            this.LearnErrLabel.Size = new System.Drawing.Size(13, 13);
+            this.LearnErrLabel.TabIndex = 33;
+            this.LearnErrLabel.Text = "_";
+            // 
+            // FGBGErrorLabel
+            // 
+            this.FGBGErrorLabel.AutoSize = true;
+            this.FGBGErrorLabel.Location = new System.Drawing.Point(444, 610);
+            this.FGBGErrorLabel.Name = "FGBGErrorLabel";
+            this.FGBGErrorLabel.Size = new System.Drawing.Size(13, 13);
+            this.FGBGErrorLabel.TabIndex = 35;
+            this.FGBGErrorLabel.Text = "_";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(385, 610);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(23, 13);
+            this.label5.TabIndex = 34;
+            this.label5.Text = "Err.";
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(694, 574);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(117, 27);
+            this.button5.TabIndex = 36;
+            this.button5.Text = "Load test pictures...";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(694, 603);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(117, 27);
+            this.button6.TabIndex = 37;
+            this.button6.Text = "Load test trimaps...";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(694, 633);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(117, 26);
+            this.button7.TabIndex = 38;
+            this.button7.Text = "Test";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // TestErrLabel
+            // 
+            this.TestErrLabel.AutoSize = true;
+            this.TestErrLabel.Location = new System.Drawing.Point(763, 667);
+            this.TestErrLabel.Name = "TestErrLabel";
+            this.TestErrLabel.Size = new System.Drawing.Size(13, 13);
+            this.TestErrLabel.TabIndex = 40;
+            this.TestErrLabel.Text = "_";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(704, 667);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(47, 13);
+            this.label6.TabIndex = 39;
+            this.label6.Text = "Test Err.";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1210, 736);
+            this.ClientSize = new System.Drawing.Size(1656, 736);
+            this.Controls.Add(this.TestErrLabel);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.button7);
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.button5);
+            this.Controls.Add(this.FGBGErrorLabel);
+            this.Controls.Add(this.label5);
+            this.Controls.Add(this.LearnErrLabel);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.button2);
+            this.Controls.Add(this.button1);
+            this.Controls.Add(this.SegmentFGBGBtn);
+            this.Controls.Add(this.trainClassifierBtn);
+            this.Controls.Add(this.applyTrimapBtn);
+            this.Controls.Add(this.loadTrimapBtn);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.resultImagePictureBox);
@@ -381,6 +579,7 @@
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.spatialConsTrackBar)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -413,6 +612,23 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox applyEdgesChkBox;
         private System.Windows.Forms.CheckBox randomColorSegmentsChkBox;
+        private System.Windows.Forms.Button loadTrimapBtn;
+        private System.Windows.Forms.Button applyTrimapBtn;
+        private System.Windows.Forms.Button trainClassifierBtn;
+        private System.Windows.Forms.Button SegmentFGBGBtn;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label LearnErrLabel;
+        private System.Windows.Forms.Label FGBGErrorLabel;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Label TestErrLabel;
+        private System.Windows.Forms.Label label6;
     }
 }
 

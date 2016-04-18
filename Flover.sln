@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AccordTests", "AccordTests\AccordTests.csproj", "{D376377B-1893-48F5-ABB3-7135DEB8F278}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Flover", "AccordTests\Flover.csproj", "{D376377B-1893-48F5-ABB3-7135DEB8F278}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "FloverWebApp", "FloverWebApp\FloverWebApp.xproj", "{DBCA9DA0-24C0-40A0-8A41-B0C417983154}"
 EndProject

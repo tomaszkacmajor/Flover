@@ -7,8 +7,8 @@
     <ProjectGuid>{D376377B-1893-48F5-ABB3-7135DEB8F278}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AccordTests</RootNamespace>
-    <AssemblyName>AccordTests</AssemblyName>
+    <RootNamespace>Flover</RootNamespace>
+    <AssemblyName>Flover</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -72,6 +72,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Pixel.cs" />
+    <Compile Include="Segment.cs" />
     <Compile Include="SLIC\IPixels5DimConverter.cs" />
     <Compile Include="SLIC\KMeansSLIC.cs" />
     <Compile Include="MainForm.cs">

@@ -4,6 +4,16 @@ namespace AccordTests
 {
     public static class Utils
     {
+        public const int L_minVal = 0;
+        public const int L_maxVal = 100;
+        public const int A_minVal = -128;
+        public const int A_maxVal = 128;
+        public const int B_minVal = -128;
+        public const int B_maxVal = 128;
+
+        public const int RGB_minVal = 0;
+        public const int RGB_maxVal = 256;
+
         public static double GetScaledValue(double value, int min, int max)
         {
             return (value - min) / (max - min);
@@ -17,19 +27,21 @@ namespace AccordTests
         /// <summary>
         ///   Applies a function to every element of the array.
         /// </summary>
-        /// 
-        public static TResult[] Apply<TInput, TResult>(this TInput[] vector, Func<TInput, int, TResult> func)
-        {
-            return Apply(vector, func, new TResult[vector.Length]);
-        }
+        ///// 
+        //public static TResult[] Apply<TInput, TResult>(this TInput[] vector, Func<TInput, int, TResult> func)
+        //{
+        //    return Apply(vector, func, new TResult[vector.Length]);
+        //}
 
 
         /// <summary>
         ///   Applies a function to every element of the array.
         /// </summary>
         /// 
-        public static TResult[] Apply<TInput, TResult>(this TInput[] vector, Func<TInput, int, TResult> func, TResult[] result)
+        public static TResult[] Apply<TInput, TResult>(this TInput[] vector, Func<TInput, int, TResult> func)
         {
+            TResult[] result = new TResult[vector.Length];
+
             for (int i = 0; i < vector.Length; i++)
                 result[i] = func(vector[i], i);
             return result;

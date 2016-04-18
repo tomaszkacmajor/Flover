@@ -1,2 +1,23 @@
 d:\dokumenty\visual studio 2015\Projects\Flover\Flover\bin\Debug\Flover.exe.config
 d:\dokumenty\visual studio 2015\Projects\Flover\Flover\bin\Debug\AccordTests.exe.config
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.dll.config
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.dll
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.Imaging.dll
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.MachineLearning.dll
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.Math.dll
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.Statistics.dll
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\ColorMine.dll
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.xml
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.Imaging.xml
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.MachineLearning.xml
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.Math.xml
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Accord.Statistics.xml
+D:\ProggBlogg\Flover\AccordTests\obj\Debug\Flover.csprojResolveAssemblyReference.cache
+D:\ProggBlogg\Flover\AccordTests\obj\Debug\AccordTests.MainForm.resources
+D:\ProggBlogg\Flover\AccordTests\obj\Debug\Flover.csproj.GenerateResource.Cache
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Flover.exe.config
+D:\ProggBlogg\Flover\AccordTests\obj\Debug\Flover.Properties.Resources.resources
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Flover.exe
+D:\ProggBlogg\Flover\AccordTests\bin\Debug\Flover.pdb
+D:\ProggBlogg\Flover\AccordTests\obj\Debug\Flover.exe
+D:\ProggBlogg\Flover\AccordTests\obj\Debug\Flover.pdb
