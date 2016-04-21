@@ -68,6 +68,8 @@
             this.button7 = new System.Windows.Forms.Button();
             this.TestErrLabel = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.workingImagePictureBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.fastDetectCornersThreshTrackBar)).BeginInit();
             this.fastCornerDetectionGroupBox.SuspendLayout();
@@ -369,7 +371,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(571, 574);
+            this.button1.Location = new System.Drawing.Point(460, 574);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(117, 27);
             this.button1.TabIndex = 29;
@@ -379,7 +381,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(571, 603);
+            this.button2.Location = new System.Drawing.Point(460, 603);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(117, 26);
             this.button2.TabIndex = 30;
@@ -389,7 +391,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(571, 630);
+            this.button4.Location = new System.Drawing.Point(460, 630);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(117, 27);
             this.button4.TabIndex = 32;
@@ -400,7 +402,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(568, 660);
+            this.label2.Location = new System.Drawing.Point(457, 660);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 13);
             this.label2.TabIndex = 23;
@@ -409,7 +411,7 @@
             // LearnErrLabel
             // 
             this.LearnErrLabel.AutoSize = true;
-            this.LearnErrLabel.Location = new System.Drawing.Point(627, 660);
+            this.LearnErrLabel.Location = new System.Drawing.Point(516, 660);
             this.LearnErrLabel.Name = "LearnErrLabel";
             this.LearnErrLabel.Size = new System.Drawing.Size(13, 13);
             this.LearnErrLabel.TabIndex = 33;
@@ -435,7 +437,7 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(694, 574);
+            this.button5.Location = new System.Drawing.Point(583, 574);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(117, 27);
             this.button5.TabIndex = 36;
@@ -445,7 +447,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(694, 603);
+            this.button7.Location = new System.Drawing.Point(583, 603);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(117, 26);
             this.button7.TabIndex = 38;
@@ -456,7 +458,7 @@
             // TestErrLabel
             // 
             this.TestErrLabel.AutoSize = true;
-            this.TestErrLabel.Location = new System.Drawing.Point(763, 637);
+            this.TestErrLabel.Location = new System.Drawing.Point(652, 637);
             this.TestErrLabel.Name = "TestErrLabel";
             this.TestErrLabel.Size = new System.Drawing.Size(13, 13);
             this.TestErrLabel.TabIndex = 40;
@@ -465,17 +467,39 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(704, 637);
+            this.label6.Location = new System.Drawing.Point(593, 637);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(47, 13);
             this.label6.TabIndex = 39;
             this.label6.Text = "Test Err.";
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(790, 574);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(117, 26);
+            this.button3.TabIndex = 41;
+            this.button3.Text = "Save Features";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(790, 602);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(117, 26);
+            this.button6.TabIndex = 42;
+            this.button6.Text = "Load Features";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1656, 736);
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.TestErrLabel);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.button7);
@@ -564,6 +588,8 @@
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Label TestErrLabel;
         private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button3;
     }
 }
 

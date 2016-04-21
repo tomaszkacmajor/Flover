@@ -2,6 +2,8 @@
 using AForge.Imaging.Filters;
 using System;
 using System.Drawing;
+using System.Globalization;
+using System.Threading;
 
 namespace AccordTests
 {
@@ -17,6 +19,9 @@ namespace AccordTests
         public const int RGB_minVal = 0;
         public const int RGB_maxVal = 256;
 
+        public static string decimalSeparator = ",";
+        public static string wrong_decimalSeparator = ".";
+
         public static double GetScaledValue(double value, int min, int max)
         {
             return (value - min) / (max - min);
@@ -26,6 +31,66 @@ namespace AccordTests
         {
             return value * (max - min) + min;
         }
+
+        public static void InitSystemSeparators()
+        {
+            CultureInfo ci = Thread.CurrentThread.CurrentCulture;
+            decimalSeparator = ci.NumberFormat.NumberDecimalSeparator;
+
+            if (decimalSeparator == ".") wrong_decimalSeparator = ",";
+            else if (decimalSeparator == ",") wrong_decimalSeparator = ".";
+        }
+
+
+        /// <summary>
+        /// Zwraca wartość double niezależnie od separatora, rodzaj separator jest wykrywany
+        /// </summary>
+        /// <param name="str">łańcuch string - może być w notacji naukowej</param>
+        /// <returns>skonwertowana liczba double</returns>
+        public static double Str2Dbl(string str)
+        {
+
+            double p1d;
+            double p2d = 0;
+
+            bool parsed;
+
+            string exponentialSymbol = "E";
+            if (str.Contains("e")) exponentialSymbol = "e";
+
+            if (str.Contains(exponentialSymbol))
+            {
+                Double.TryParse(str.Split(exponentialSymbol.ToCharArray())[0].Replace(wrong_decimalSeparator, decimalSeparator), out p1d);
+                parsed = Double.TryParse(str.Split(exponentialSymbol.ToCharArray())[1].Replace(wrong_decimalSeparator, decimalSeparator), out p2d);
+
+            }
+            else
+            {
+                parsed = Double.TryParse(str.Replace(wrong_decimalSeparator, decimalSeparator), out p1d);
+            }
+
+            if (!parsed)
+            {
+                throw new ValueInvalidException(str);
+            }
+
+            if (str.Contains("E"))
+                return p1d * Math.Pow(10, p2d);
+            else return p1d;
+
+        }
+
+        public static int Str2Int(string str)
+        {
+            double val = Str2Dbl(str);
+
+            double diff = Math.Abs(Math.Truncate(val) - val);
+            if (diff > 0.0000001) throw new ValueNotIntegerException(str);
+
+            return (int)val;
+
+        }
+
 
         /// <summary>
         ///   Applies a function to every element of the array.
@@ -142,4 +207,21 @@ namespace AccordTests
             return retImage;
         }
     }
+
+    public class ValueInvalidException : Exception
+    {
+        public ValueInvalidException()
+        { }
+        public ValueInvalidException(string message) : base(message) { }
+        public ValueInvalidException(string message, Exception inner) : base(message, inner) { }
+    }
+
+    public class ValueNotIntegerException : Exception
+    {
+        public ValueNotIntegerException()
+        { }
+        public ValueNotIntegerException(string message) : base(message) { }
+        public ValueNotIntegerException(string message, Exception inner) : base(message, inner) { }
+    }
+
 }

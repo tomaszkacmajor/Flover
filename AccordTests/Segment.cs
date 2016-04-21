@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AccordTests
 {
@@ -32,7 +34,7 @@ namespace AccordTests
         }
 
         public void FormFeatures()
-        {         
+        {      
 
             FeatureVec[0] = Color.R;
             FeatureVec[1] = Color.G;
@@ -73,6 +75,6 @@ namespace AccordTests
             return variance; 
         }
 
-       // bool Touching
+
     }
 }

@@ -41,6 +41,8 @@ namespace AccordTests
         {
             InitializeComponent();
 
+            Utils.InitSystemSeparators();
+
             string openFileDialogFilter = "Graphics types|*.bmp;*.gif;*.jpg;*.jpeg;*.png;*.tif;*.tiff" + "|BMP|*.bmp|GIF|*.gif|JPG|*.jpg;*.jpeg|PNG|*.png|TIFF|*.tif;*.tiff";
             openFileDialog = new OpenFileDialog();
             openFileDialog.Multiselect = false;
@@ -257,18 +259,7 @@ namespace AccordTests
 
         private int EliminateBckg(Bitmap image, Bitmap triImage)
         {
-            slic = new SLICMethod(SLICTrackBar.Value, spatialConsTrackBar.Value, ColorSpaceType.Lab);
-            slic.ShowEdges = applyEdgesChkBox.Checked;
-            slic.ShowRandomColorSegments = randomColorSegmentsChkBox.Checked;
-
-            segmentedImage = slic.Segment(image);
-            resultImagePictureBox.Image = segmentedImage;
-            Refresh();
-
-            Segments = slic.Segments;
-            Pixels = slic.Pixels;
-
-            AttachLabelToSegment(Segments, triImage);
+            SegmentAndAttachLabels(image, triImage);
 
             foreach (var segment in Segments)
             {
@@ -354,6 +345,21 @@ namespace AccordTests
             return GetTrimapImagesSet(imageFileNames);
         }
 
+        private void SegmentAndAttachLabels(Bitmap image, Bitmap triImage)
+        {
+            slic = new SLICMethod(SLICTrackBar.Value, spatialConsTrackBar.Value, ColorSpaceType.Lab);
+            slic.ShowEdges = applyEdgesChkBox.Checked;
+            slic.ShowRandomColorSegments = randomColorSegmentsChkBox.Checked;
+
+            segmentedImage = slic.Segment(image);
+            resultImagePictureBox.Image = segmentedImage;
+
+            Segments = slic.Segments;
+            Pixels = slic.Pixels;
+
+            AttachLabelToSegment(Segments, triImage);
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             int noFeatures = loadedImages.Length * SLICTrackBar.Value;
@@ -367,22 +373,14 @@ namespace AccordTests
                 Bitmap curTriImage = trimapImages[i];
 
                 workingImagePictureBox.Image = curImage;
+                Refresh();
 
-                slic = new SLICMethod(SLICTrackBar.Value, spatialConsTrackBar.Value, ColorSpaceType.Lab);
-                slic.ShowEdges = applyEdgesChkBox.Checked;
-                slic.ShowRandomColorSegments = randomColorSegmentsChkBox.Checked;
-
-                segmentedImage = slic.Segment(curImage);
-                resultImagePictureBox.Image = segmentedImage;
-
-                Segments = slic.Segments;
-                Pixels = slic.Pixels;
-
-                AttachLabelToSegment(Segments, curTriImage);
+                SegmentAndAttachLabels(curImage, curTriImage);
 
                 foreach (var segment in Segments)
                 {
                     segment.FormFeatures();
+
                     features[featureNo] = segment.FeatureVec;
 
                     if (segment.MaskType == MaskTypes.Foreground)
@@ -391,7 +389,6 @@ namespace AccordTests
 
                     featureNo++;
                 }
-
             }
         
         }
@@ -401,14 +398,15 @@ namespace AccordTests
         private void button4_Click(object sender, EventArgs e)
         {
             IKernel kernel = new Gaussian(70);
+            //IKernel kernel = new Linear(0);
             // Create a Support Vector Machine for the given inputs
             machine = new KernelSupportVectorMachine(kernel, features[0].Length);
-
+                        
             // Instantiate a new learning algorithm for SVMs
             SequentialMinimalOptimization smo = new SequentialMinimalOptimization(machine, features, outputs);
 
             // Set up the learning algorithm
-            smo.Complexity = 85;
+            smo.Complexity = 40;
             
             // Run
             try
@@ -464,6 +462,77 @@ namespace AccordTests
             }
 
             TestErrLabel.Text = ((double)cntAllRight_alltestImages / noFeatures).ToString();
+        }
+
+
+        public void SaveFeatures()
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.ShowDialog();
+
+            string filePath = sfd.FileName;
+            int noVectors = features.Length;
+
+            using (var sw = new StreamWriter(filePath))
+            {
+                sw.WriteLine(noVectors.ToString());
+
+                for (int i = 0; i < features.Length; i++)
+                {
+                    double[] feat = features[i];
+
+                    for (int j = 0; j < noVectors; j++)
+                    {
+                        sw.Write(feat[j].ToString() + ";");
+                    }
+
+                    sw.WriteLine(outputs[i].ToString());
+                }
+            }
+        }
+
+        public void LoadFeatures()
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.ShowDialog();
+            string filePath = ofd.FileName;
+            int noVectors;
+            
+            using (var sr = new StreamReader(filePath))
+            {
+                noVectors = Utils.Str2Int(sr.ReadLine());
+                features = new double[noVectors][];
+                outputs = new int[noVectors];
+
+                int featVecNo = 0;
+                while(sr.Peek()>0)
+                {
+                    string line = sr.ReadLine();
+                    string[] strSplit = line.Split(new char[] { ';' });
+                    int noFeatures = strSplit.Length - 1;
+
+                    double[] temp = new double[noFeatures];
+
+
+                    for (int j = 0; j < noFeatures; j++)
+                    {
+                        temp[j] = Utils.Str2Dbl(strSplit[j]);
+                    }
+                    features[featVecNo] = temp;
+                    outputs[featVecNo] = Utils.Str2Int(strSplit[noFeatures ]);
+                    featVecNo++;
+                }
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            SaveFeatures();
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            LoadFeatures();
         }
     }
 }
