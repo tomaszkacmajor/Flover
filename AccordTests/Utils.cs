@@ -1,4 +1,7 @@
-﻿using System;
+﻿using AForge.Imaging;
+using AForge.Imaging.Filters;
+using System;
+using System.Drawing;
 
 namespace AccordTests
 {
@@ -102,6 +105,41 @@ namespace AccordTests
             return row * width + col;
         }
 
+        public static Bitmap GetImageDownscaled(Bitmap loadedImage)
+        {
+            Bitmap retImage;
 
+            int imageMaxSize = 500;
+            int newHeight;
+            int newWidth;
+            if (loadedImage.Width > imageMaxSize || loadedImage.Height > imageMaxSize)
+            {
+                double imageRatio = (double)loadedImage.Width / loadedImage.Height;
+                if (loadedImage.Width > loadedImage.Height)
+                {
+                    newWidth = imageMaxSize;
+                    newHeight = (int)((double)imageMaxSize / imageRatio);
+                }
+                else
+                {
+                    newHeight = imageMaxSize;
+                    newWidth = (int)((double)imageMaxSize * imageRatio);
+                }
+
+                UnmanagedImage unmanagedImage = UnmanagedImage.FromManagedImage(loadedImage);
+
+                ResizeBicubic resizeFilter = new ResizeBicubic(newWidth, newHeight);
+                UnmanagedImage tempImage = resizeFilter.Apply(unmanagedImage);
+
+                retImage = tempImage.ToManagedImage();
+
+            }
+            else
+            {
+                retImage = loadedImage;
+            }
+
+            return retImage;
+        }
     }
 }

@@ -45,14 +45,7 @@ namespace AccordTests
             FeatureVec[5] = variance[2];
 
             FeatureVec[6] = Point.X;
-            FeatureVec[7] = Point.Y;
-
-            //for (int i = 0; i < 8; i++)
-            //{
-            //    Console.Write(featureVec[i].ToString()+ " ");
-            //}
-
-            //Console.WriteLine();
+            FeatureVec[7] = Point.Y;          
         }
 
         double[] GetVariance()
