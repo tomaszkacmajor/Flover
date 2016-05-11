@@ -110,15 +110,12 @@ namespace AccordTests.SLIC
                     R = (int)myRgb.R;
                     G = (int)myRgb.G;
                     B = (int)myRgb.B;
-                }
-
-                
+                }               
                
-
                 MyRGB color = new MyRGB(R, G, B);
                 Point point = new Point(X, Y);
 
-                Segments[i] = new Segment(color, point);
+                Segments[i] = new Segment(color, point, imageHeight, imageWidth);
             }
 
             int[] count = new int[centroids.Length];

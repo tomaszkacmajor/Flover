@@ -17,6 +17,7 @@ using Accord.MachineLearning.VectorMachines.Learning;
 using Accord.Statistics.Kernels;
 using System.Threading;
 using System.IO;
+using System.Text;
 
 namespace AccordTests
 {
@@ -35,6 +36,7 @@ namespace AccordTests
         Bitmap[] trimapImages;
         Bitmap[] testTrimapImages;
         double[][] features;
+        double[][] origFeatures;
         int[] outputs;
 
         public MainForm()
@@ -59,10 +61,20 @@ namespace AccordTests
         {
             openFileDialog.ShowDialog();
             loadedImages = GetImagesSet(openFileDialog.FileName);
+
+            if (!File.Exists(GetTrimapPath(openFileDialog.FileName)))
+            {
+                MessageBox.Show("The corresponding trimap image does not exist. Try to load another image.");
+                return;
+            }
+
             trimapImages = GetTrimapImagesSet(openFileDialog.FileName);
-            
+
             image = loadedImages[0];// GetImageDownscaled(loadedImage);
+
             workingImagePictureBox.Image = image;
+
+          
         }
 
      
@@ -257,44 +269,84 @@ namespace AccordTests
 
         KernelSupportVectorMachine machine;
 
-        private int EliminateBckg(Bitmap image, Bitmap triImage)
+        private double EliminateBckg(Bitmap image, Bitmap triImage)
         {
             SegmentAndAttachLabels(image, triImage);
+
+            int cntAllRight = 0;
+            int cntUnionForeground = 0;
 
             foreach (var segment in Segments)
             {
                 segment.FormFeatures();
 
-                int FGPix = Math.Sign(machine.Compute(segment.FeatureVec));
+                //double featureVec =  Accord.Statistics.Tools.ZScores(segment.FeatureVec, means, stdDev);
+
+                double[] featureVec = new double[segment.FeatureVec.Length];
+                segment.FeatureVec.CopyTo(featureVec, 0);
+
+
+                //   Accord.Statistics.Tools.Center(featureVec, means);
+                //for (int i = 0; i < featureVec.Length; i++)
+                //{
+                //    featureVec[i] += means[i];
+                //}
+                //  featureVec = Accord.Statistics.Tools.Standardize(stdDev);
+
+
+                //featureVec = Accord.Statistics.Tools.Standardize(featureVec);
+
+
+
+
+
+                double[][] newFeatures = new double[origFeatures.Length + 1][];
+                for (int i = 0; i < origFeatures.Length; i++)
+                {
+                    newFeatures[i] = origFeatures[i];
+                }
+                newFeatures[origFeatures.Length] = featureVec;
+
+                newFeatures = Accord.Statistics.Tools.ZScores(newFeatures);
+                featureVec = newFeatures[origFeatures.Length];
+
+                int FGPix = Math.Sign(machine.Compute(featureVec));
                 foreach (var item in segment.Pixels)
                 {
                     if (FGPix == -1)
                         item.Color = new MyRGB(0, 0, 0);
                 }
 
+                // int FGPix = Math.Sign(machine.Compute(Segments[i].FeatureVec));
+                //if ((FGPix == 1 && segment.MaskType == MaskTypes.Foreground) ||
+                //    (FGPix == -1 && (segment.MaskType == MaskTypes.Background || segment.MaskType == MaskTypes.Unknown)))
+                //    cntAllRight++;
+
+                if (FGPix == 1 && segment.MaskType == MaskTypes.Foreground)
+                    cntAllRight++;
+
+                if (FGPix == 1 || segment.MaskType == MaskTypes.Foreground)
+                    cntUnionForeground++;
             }
 
             Pixels5DimConverterRgbSpace converter = new Pixels5DimConverterRgbSpace();
             Bitmap segmImage = converter.GetImage2(Pixels);
             resultImagePictureBox.Image = segmImage;
 
-            int cntAllRight = 0;
-            for (int i = 0; i < Segments.Length; i++)
-            {
-                int FGPix = Math.Sign(machine.Compute(Segments[i].FeatureVec));
-                if ((FGPix == 1 && Segments[i].MaskType == MaskTypes.Foreground) ||
-                    (FGPix == -1 && (Segments[i].MaskType == MaskTypes.Background || Segments[i].MaskType == MaskTypes.Unknown)))
-                    cntAllRight++;
-            }
+            //int cntAllRight = 0;
+            //for (int i = 0; i < Segments.Length; i++)
+            //{
+              
+            //}
 
-            return cntAllRight;
+            return (double)cntAllRight/cntUnionForeground ;
         }
 
         private void SegmentFGBGBtn_Click(object sender, EventArgs e)
         {
-            int cntAllRight = EliminateBckg(image, trimapImages[0]);
+            double result = EliminateBckg(image, trimapImages[0]);
 
-            FGBGErrorLabel.Text = ((double)cntAllRight / Segments.Length).ToString();
+            FGBGErrorLabel.Text = result.ToString();
         }
 
     
@@ -302,8 +354,32 @@ namespace AccordTests
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialogMulti.ShowDialog();
-            loadedImages = GetImagesSet(openFileDialogMulti.FileNames);
-            trimapImages = GetTrimapImagesSet(openFileDialogMulti.FileNames);         
+
+
+            int noTrimapFiles = 0;
+            for (int i = 0; i < openFileDialogMulti.FileNames.Length; i++)
+            {
+                string fileName = openFileDialogMulti.FileNames[i];
+                if (File.Exists(GetTrimapPath(fileName)))
+                    noTrimapFiles++;
+            }
+
+            Console.WriteLine("No. available trimaps: " + noTrimapFiles.ToString());
+
+            string[] existingFileNames = new string[noTrimapFiles];
+            int ind = 0;
+            for (int i = 0; i < openFileDialogMulti.FileNames.Length; i++)
+            {
+                string fileName = openFileDialogMulti.FileNames[i];
+                if (File.Exists(GetTrimapPath(fileName)))
+                {
+                    existingFileNames[ind] = fileName;
+                    ind++;
+                }
+            }
+
+            loadedImages = GetImagesSet(existingFileNames);
+            trimapImages = GetTrimapImagesSet(existingFileNames);         
         }
 
         Bitmap[] GetImagesSet(string[] imageFileNames)
@@ -331,11 +407,16 @@ namespace AccordTests
 
             for (int i = 0; i < imageFileNames.Length; i++)
             {
-                string trimapImagePath = imageFileNames[i].Replace("samples", "trimaps\\trimaps").Replace(".jpg", ".png");
+                string trimapImagePath = GetTrimapPath(imageFileNames[i]);
                 ImagesArr[i] = new Bitmap(trimapImagePath);
             }
 
             return ImagesArr;
+        }
+
+        string GetTrimapPath(string imageFileName)
+        {
+            return imageFileName.Replace("samples", "trimaps\\trimaps").Replace(".jpg", ".png");
         }
 
         Bitmap[] GetTrimapImagesSet(string imageFileName)
@@ -367,29 +448,59 @@ namespace AccordTests
             outputs = new int[noFeatures];
             int featureNo = 0;
 
-            for (int i=0; i< loadedImages.Length; i++)
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.ShowDialog();
+
+            string filePath = sfd.FileName;
+            int noVectors = features.Length;
+
+            using (var sw = new StreamWriter(filePath))
             {
-                Bitmap curImage = loadedImages[i];
-                Bitmap curTriImage = trimapImages[i];
+                sw.WriteLine(noVectors.ToString());
 
-                workingImagePictureBox.Image = curImage;
-                Refresh();
 
-                SegmentAndAttachLabels(curImage, curTriImage);
-
-                foreach (var segment in Segments)
+                for (int i = 0; i < loadedImages.Length; i++)
                 {
-                    segment.FormFeatures();
+                    Bitmap curImage = loadedImages[i];
+                    Bitmap curTriImage = trimapImages[i];
 
-                    features[featureNo] = segment.FeatureVec;
+                    workingImagePictureBox.Image = curImage;
+                    Refresh();
 
-                    if (segment.MaskType == MaskTypes.Foreground)
-                        outputs[featureNo] = 1;
-                    else outputs[featureNo] = -1;
+                    SegmentAndAttachLabels(curImage, curTriImage);
 
-                    featureNo++;
+                    foreach (var segment in Segments)
+                    {
+                        segment.FormFeatures();
+
+                        features[featureNo] = segment.FeatureVec;
+
+                        if (segment.MaskType == MaskTypes.Foreground)
+                            outputs[featureNo] = 1;
+                        else outputs[featureNo] = -1;
+
+                        double[] feat = features[featureNo];
+                        for (int j = 0; j < feat.Length; j++)
+                        {
+                            sw.Write(feat[j].ToString("N3") + ";");
+                        }
+                        sw.WriteLine(outputs[featureNo].ToString());
+
+                        featureNo++;
+                    }
                 }
+
+
+
+
+
+
+             
             }
+
+
+
+          
         
         }
 
@@ -397,42 +508,112 @@ namespace AccordTests
 
         private void button4_Click(object sender, EventArgs e)
         {
-            IKernel kernel = new Gaussian(70);
-            //IKernel kernel = new Linear(0);
-            // Create a Support Vector Machine for the given inputs
+            double kernelSigma = Utils.Str2Dbl(KernelSigmaTxtBox.Text);
+            double complexity = Utils.Str2Dbl(ComplexityTxtBox.Text);
+            TrainSVM(kernelSigma, complexity);
+        }
+
+        private void TrainSVM(double kernelSigma, double complexity)
+        {
+            Gaussian kernel = new Gaussian();
+            kernel.Gamma = kernelSigma;
+            //Gaussian kernel = Gaussian.Estimate(features);
+
             machine = new KernelSupportVectorMachine(kernel, features[0].Length);
-                        
-            // Instantiate a new learning algorithm for SVMs
+            
+
             SequentialMinimalOptimization smo = new SequentialMinimalOptimization(machine, features, outputs);
 
-            // Set up the learning algorithm
-            smo.Complexity = 40;
-            
+            smo.Complexity = complexity;
+            smo.Tolerance = 0.2;
+
+
+            // smo.UseComplexityHeuristic = true;
+
+            if (features.Length > 4000)
+                smo.CacheSize = features.Length / 20;
+
+            bool trained = false;
+
             // Run
             try
             {
                 double error = smo.Run();
-                MessageBox.Show("SVM Trained");
+                //MessageBox.Show("SVM Trained");
+                trained = true;
             }
             catch
             {
-                MessageBox.Show("SVM Fail");
+              //  MessageBox.Show("SVM Fail");
             }
 
 
-            int cntAllRight = 0;
-            for (int i = 0; i < features.Length; i++)
+            if (trained)
             {
-                int FGPix = Math.Sign(machine.Compute(features[i]));
-                if (FGPix == outputs[i])
-                    cntAllRight++;
+                int cntAllRight = 0;
+                int cntUnionForegrounds = 0;
+                for (int i = 0; i < features.Length; i++)
+                {
+                    int FGPix = Math.Sign(machine.Compute(features[i]));
+
+                    if (FGPix == 1 && outputs[i] == 1)
+                        cntAllRight++;
+
+                    if (FGPix == 1 || outputs[i] == 1)
+                        cntUnionForegrounds++;
+                }
+
+                double LearnErr = (double)cntAllRight / cntUnionForegrounds;
+                LearnErrLabel.Text = LearnErr.ToString("N3");
+
+                cntAllRight = 0;
+                cntUnionForegrounds = 0;
+                for (int i = 0; i < validationFeatures.Length; i++)
+                {
+                    int FGPix = Math.Sign(machine.Compute(validationFeatures[i]));
+
+                    if (FGPix == 1 && validationOutputs[i] == 1)
+                        cntAllRight++;
+
+                    if (FGPix == 1 || validationOutputs[i] == 1)
+                        cntUnionForegrounds++;
+                }
+
+                double ValidErr = (double)cntAllRight / cntUnionForegrounds;
+                ValidationErrLabel.Text = ValidErr.ToString("N3");
+
+                if (testingFeatures != null)
+                {
+                    cntAllRight = 0;
+                    cntUnionForegrounds = 0;
+                    for (int i = 0; i < testingFeatures.Length; i++)
+                    {
+                        int FGPix = Math.Sign(machine.Compute(testingFeatures[i]));
+
+                        if (FGPix == 1 && testingOutputs[i] == 1)
+                            cntAllRight++;
+
+                        if (FGPix == 1 || testingOutputs[i] == 1)
+                            cntUnionForegrounds++;
+                    }
+
+                    double TestErr = (double)cntAllRight / cntUnionForegrounds;
+                    TestingErrLabel.Text = TestErr.ToString("N3");
+                }
+
+                // Console.WriteLine(machine.SupportVectors.Length.ToString() + " support vectors");
+
+                string output = "Sigma: " + kernelSigma.ToString() + ", complexity: " + complexity.ToString() + " - " + LearnErr.ToString() + " " + ValidErr.ToString();
+                Console.WriteLine(output);
+                sb.AppendLine(output);
+
+               
+
+                
             }
-
-            LearnErrLabel.Text = ((double)cntAllRight / features.Length).ToString();
-
-            machine.Save("D://txt.txt");
-          //  machine = SupportVectorMachine.Load("");
         }
+
+        StringBuilder sb = new StringBuilder();
 
         private void button5_Click(object sender, EventArgs e)
         {
@@ -444,8 +625,9 @@ namespace AccordTests
 
         private void button7_Click(object sender, EventArgs e)
         {
-            int noFeatures = testImages.Length * SLICTrackBar.Value;      
-            int cntAllRight_alltestImages = 0;
+            int noFeatures = testImages.Length * SLICTrackBar.Value;
+            double resultCum = 0;     
+            //int cntAllRight_alltestImages = 0;
 
             for (int i = 0; i < testImages.Length; i++)
             {
@@ -455,13 +637,14 @@ namespace AccordTests
                 workingImagePictureBox.Image = curImage;
                 Refresh();
 
-                int cntAllRight = EliminateBckg(curImage, curTriImage);
-                cntAllRight_alltestImages += cntAllRight;
+                double result = EliminateBckg(curImage, curTriImage);
+                resultCum += result;
+               // cntAllRight_alltestImages += cntAllRight;
 
-                Console.WriteLine(((double)cntAllRight / Segments.Length).ToString());
+                Console.WriteLine(result.ToString());
             }
 
-            TestErrLabel.Text = ((double)cntAllRight_alltestImages / noFeatures).ToString();
+            ValidationErrLabel.Text = (resultCum / testImages.Length).ToString();
         }
 
 
@@ -481,7 +664,7 @@ namespace AccordTests
                 {
                     double[] feat = features[i];
 
-                    for (int j = 0; j < noVectors; j++)
+                    for (int j = 0; j < feat.Length; j++)
                     {
                         sw.Write(feat[j].ToString() + ";");
                     }
@@ -491,13 +674,21 @@ namespace AccordTests
             }
         }
 
+
+    
+
         public void LoadFeatures()
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.ShowDialog();
             string filePath = ofd.FileName;
             int noVectors;
-            
+            int noFeatures = 8;
+            int cntPos = 0;
+            int cntNeg = 0;
+
+
+
             using (var sr = new StreamReader(filePath))
             {
                 noVectors = Utils.Str2Int(sr.ReadLine());
@@ -505,11 +696,12 @@ namespace AccordTests
                 outputs = new int[noVectors];
 
                 int featVecNo = 0;
+
                 while(sr.Peek()>0)
                 {
                     string line = sr.ReadLine();
                     string[] strSplit = line.Split(new char[] { ';' });
-                    int noFeatures = strSplit.Length - 1;
+                    noFeatures = strSplit.Length - 1;
 
                     double[] temp = new double[noFeatures];
 
@@ -520,10 +712,252 @@ namespace AccordTests
                     }
                     features[featVecNo] = temp;
                     outputs[featVecNo] = Utils.Str2Int(strSplit[noFeatures ]);
-                    featVecNo++;
+
+                    if (outputs[featVecNo] == 1) cntPos++;
+                    else cntNeg++;
+
+                    featVecNo++;                 
                 }
             }
+
+            Console.WriteLine(cntPos.ToString());
+            Console.WriteLine(cntNeg.ToString());
+
+
+            ///
+
+            //int[] sampleVector = Utils.SampleVector(noVectors);
+           
+
+            //int noRandomVectors = Utils.Str2Int(noVectorsTxtBox.Text);
+            //double[][] randFeatures = new double[noRandomVectors][];
+            //int[] randOutputs = new int[noRandomVectors];
+
+            //for (int i = 0; i < noRandomVectors; i++)
+            //{
+            //    double[] temp = new double[noFeatures];
+
+            //    temp = features[sampleVector[i]];
+            //    randFeatures[i] = temp;
+            //    randOutputs[i] = outputs[sampleVector[i]];             
+            //}
+
+
+            //int noValidationVectors = Utils.Str2Int(noValidationVecTxtBox.Text);
+            //validationFeatures = new double[noValidationVectors][];
+            //validationOutputs = new int[noValidationVectors];
+
+            //for (int i = 0; i < noValidationVectors; i ++)
+            //{
+            //    double[] temp = new double[noFeatures];
+
+            //    temp = features[sampleVector[i + noRandomVectors]];
+            //    validationFeatures[i] = temp;
+            //    validationOutputs[i] = outputs[sampleVector[i + noRandomVectors]];
+            //}
+
+
+
+
+            double[][] vectorsPositive = new double[cntPos][];
+            double[][] vectorsNegative = new double[cntNeg][];
+            int[] outputsPositive = new int[cntPos];
+            int[] outputsNegative = new int[cntNeg];
+
+            int indPos = 0;
+            int indNeg = 0;
+            for (int i = 0; i < noVectors; i++)
+            {
+                if (outputs[i] == 1)
+                {
+                    vectorsPositive[indPos] = features[i];
+                    outputsPositive[indPos] = outputs[i];
+                    indPos++;
+                }
+                else
+                {
+                    vectorsNegative[indNeg] = features[i];
+                    outputsNegative[indNeg] = outputs[i];
+                    indNeg++;
+                }
+
+            }
+
+
+            int[] sampleVectorPos = Utils.SampleVector(indPos);
+            int[] sampleVectorNeg = Utils.SampleVector(indNeg);
+
+
+            int noRandomVectors = Utils.Str2Int(noVectorsTxtBox.Text);
+            double[][] randFeatures = new double[noRandomVectors][];
+            int[] randOutputs = new int[noRandomVectors];
+
+            for (int i = 0; i < noRandomVectors; i += 2)
+            {
+                double[] temp = new double[noFeatures];
+
+                temp = vectorsPositive[sampleVectorPos[i]];
+                randFeatures[i] = temp;
+                randOutputs[i] = outputsPositive[sampleVectorPos[i]];
+
+                temp = vectorsNegative[sampleVectorNeg[i]];
+                randFeatures[i + 1] = temp;
+                randOutputs[i + 1] = outputsNegative[sampleVectorNeg[i]];
+            }
+
+
+
+            int noValidationVectors = Utils.Str2Int(noValidationVecTxtBox.Text);
+            validationFeatures = new double[noValidationVectors][];
+            validationOutputs = new int[noValidationVectors];
+
+            for (int i = 0; i < noValidationVectors; i += 2)
+            {
+                double[] temp = new double[noFeatures];
+
+                temp = vectorsPositive[sampleVectorPos[i + noRandomVectors]];
+                validationFeatures[i] = temp;
+                validationOutputs[i] = outputsPositive[sampleVectorPos[i + noRandomVectors]];
+
+                temp = vectorsNegative[sampleVectorNeg[i + noRandomVectors]];
+                validationFeatures[i + 1] = temp;
+                validationOutputs[i + 1] = outputsNegative[sampleVectorNeg[i + noRandomVectors]];
+            }
+
+
+
+            int noTestingVectors = Utils.Str2Int(NoTestingVectorsTxtBox.Text);
+            testingFeatures = new double[noTestingVectors][];
+            testingOutputs = new int[noTestingVectors];
+
+            for (int i = 0; i < noTestingVectors; i += 2)
+            {
+                double[] temp = new double[noFeatures];
+
+                temp = vectorsPositive[sampleVectorPos[i + noRandomVectors + noValidationVectors]];
+                testingFeatures[i] = temp;
+                testingOutputs[i] = outputsPositive[sampleVectorPos[i + noRandomVectors]];
+
+                temp = vectorsNegative[sampleVectorNeg[i + noRandomVectors + noValidationVectors]];
+                testingFeatures[i + 1] = temp;
+                testingOutputs[i + 1] = outputsNegative[sampleVectorNeg[i + noRandomVectors]];
+            }
+
+
+
+
+
+            features = randFeatures;
+            outputs = randOutputs;
+
+            Console.WriteLine(cntPos.ToString());
+            Console.WriteLine(cntNeg.ToString());
+
+
+
+            origFeatures = new double[noRandomVectors][];
+            Array.Copy(features, origFeatures, noRandomVectors);           
+
+            features = Accord.Statistics.Tools.ZScores(features);
+            validationFeatures = Accord.Statistics.Tools.ZScores(validationFeatures);
+    //        testingFeatures = Accord.Statistics.Tools.ZScores(testingFeatures);
+
+            Console.WriteLine();
+
+
+
+
+
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.Title = "Save learning vectors";
+            sfd.ShowDialog();
+
+            filePath = sfd.FileName;
+            noVectors = features.Length;
+
+            if (filePath != "")
+            using (var sw = new StreamWriter(filePath))
+            {
+                sw.WriteLine(noVectors.ToString());
+
+                for (int i = 0; i < features.Length; i++)
+                {
+                    double[] feat = features[i];
+
+                    for (int j = 0; j < feat.Length; j++)
+                    {
+                        sw.Write(feat[j].ToString() + ";");
+                    }
+
+                    sw.WriteLine(outputs[i].ToString());
+                }
+            }
+
+
+
+            sfd = new SaveFileDialog();
+            sfd.Title = "Save validation vectors";
+            sfd.ShowDialog();
+
+            filePath = sfd.FileName;
+            noVectors = validationFeatures.Length;
+
+            if (filePath != "")
+            using (var sw = new StreamWriter(filePath))
+            {
+                sw.WriteLine(noVectors.ToString());
+
+                for (int i = 0; i < validationFeatures.Length; i++)
+                {
+                    double[] feat = validationFeatures[i];
+
+                    for (int j = 0; j < feat.Length; j++)
+                    {
+                        sw.Write(feat[j].ToString() + ";");
+                    }
+
+                    sw.WriteLine(validationOutputs[i].ToString());
+                }
+            }
+
+
+            if (testingFeatures != null)
+            {
+                sfd = new SaveFileDialog();
+                sfd.Title = "Save testing vectors";
+                sfd.ShowDialog();
+
+                filePath = sfd.FileName;
+                noVectors = testingFeatures.Length;
+
+                if (filePath != "")
+                    using (var sw = new StreamWriter(filePath))
+                    {
+                        sw.WriteLine(noVectors.ToString());
+
+                        for (int i = 0; i < testingFeatures.Length; i++)
+                        {
+                            double[] feat = testingFeatures[i];
+
+                            for (int j = 0; j < feat.Length; j++)
+                            {
+                                sw.Write(feat[j].ToString() + ";");
+                            }
+
+                            sw.WriteLine(testingOutputs[i].ToString());
+                        }
+                    }
+
+            }
         }
+
+        double[] means;
+        double[] stdDev;
+
+        double[][] validationFeatures;
+        int[] validationOutputs;
+        double[][] testingFeatures;
+        int[] testingOutputs;
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -534,5 +968,269 @@ namespace AccordTests
         {
             LoadFeatures();
         }
+
+        private void saveModelBtn_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.ShowDialog();
+
+            string fileName = sfd.FileName;
+
+            machine.Save(fileName);
+
+        }
+
+        private void LoadModelBtn_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.ShowDialog();
+            string fileName = ofd.FileName;
+
+            machine = KernelSupportVectorMachine.Load(fileName);
+        }
+
+        private void CalcGMMBtn_Click(object sender, EventArgs e)
+        {
+            GaussianMixtureModel gmm = new GaussianMixtureModel(5);
+
+            double[][] dataForGMM = new double[Segments.Length][];
+            int cnt = 0;
+            foreach (var segment in Segments)
+            {
+                segment.FormFeatures();
+                dataForGMM[cnt] = new double[1];
+                dataForGMM[cnt++][0] = segment.FeatureVec[0];
+
+            }
+
+                // Compute the model (estimate)
+                gmm.Compute(dataForGMM, 0.0001);
+
+            // Classify a single sample
+            //int c = gmm.Gaussians.Nearest(sample);
+
+            foreach (var item in gmm.Gaussians.Coefficients)
+            {
+                Console.WriteLine(item.ToString());
+            }
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+         
+        }
+
+        private void noTestingVecTxtBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.ShowDialog();
+            string filePath = ofd.FileName;
+            int noVectors;
+            int noFeatures = 8;
+          
+            using (var sr = new StreamReader(filePath))
+            {
+                noVectors = Utils.Str2Int(sr.ReadLine());
+                features = new double[noVectors][];
+                outputs = new int[noVectors];
+
+                int featVecNo = 0;
+
+                while (sr.Peek() > 0)
+                {
+                    string line = sr.ReadLine();
+                    string[] strSplit = line.Split(new char[] { ';' });
+                    noFeatures = strSplit.Length - 1;
+
+                    double[] temp = new double[noFeatures];
+
+
+                    for (int j = 0; j < noFeatures; j++)
+                    {
+                        temp[j] = Utils.Str2Dbl(strSplit[j]);
+                    }
+                    features[featVecNo] = temp;
+                    outputs[featVecNo] = Utils.Str2Int(strSplit[noFeatures]);
+
+                   
+                    featVecNo++;
+                }
+            }
+
+            noVectorsTxtBox.Text = noVectors.ToString();
+
+            origFeatures = new double[noVectors][];
+            Array.Copy(features, origFeatures, noVectors);
+
+            features = Accord.Statistics.Tools.ZScores(features);
+         
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.ShowDialog();
+            string filePath = ofd.FileName;
+            int noVectors;
+            int noFeatures = 8;
+
+            using (var sr = new StreamReader(filePath))
+            {
+                noVectors = Utils.Str2Int(sr.ReadLine());
+                validationFeatures = new double[noVectors][];
+                validationOutputs = new int[noVectors];
+
+                int featVecNo = 0;
+
+                while (sr.Peek() > 0)
+                {
+                    string line = sr.ReadLine();
+                    string[] strSplit = line.Split(new char[] { ';' });
+                    noFeatures = strSplit.Length - 1;
+
+                    double[] temp = new double[noFeatures];
+
+                    for (int j = 0; j < noFeatures; j++)
+                    {
+                        temp[j] = Utils.Str2Dbl(strSplit[j]);
+                    }
+                    validationFeatures[featVecNo] = temp;
+                    validationOutputs[featVecNo] = Utils.Str2Int(strSplit[noFeatures]);
+                    
+                    featVecNo++;
+                }
+
+            }
+
+            noValidationVecTxtBox.Text = noVectors.ToString();
+            validationFeatures = Accord.Statistics.Tools.ZScores(validationFeatures);
+         
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog();
+            ofd.ShowDialog();
+            string filePath = ofd.FileName;
+            int noVectors;
+            int noFeatures = 8;
+
+            using (var sr = new StreamReader(filePath))
+            {
+                noVectors = Utils.Str2Int(sr.ReadLine());
+                testingFeatures = new double[noVectors][];
+                testingOutputs = new int[noVectors];
+
+                int featVecNo = 0;
+
+                while (sr.Peek() > 0)
+                {
+                    string line = sr.ReadLine();
+                    string[] strSplit = line.Split(new char[] { ';' });
+                    noFeatures = strSplit.Length - 1;
+
+                    double[] temp = new double[noFeatures];
+
+                    for (int j = 0; j < noFeatures; j++)
+                    {
+                        temp[j] = Utils.Str2Dbl(strSplit[j]);
+                    }
+                    testingFeatures[featVecNo] = temp;
+                    testingOutputs[featVecNo] = Utils.Str2Int(strSplit[noFeatures]);
+
+                    featVecNo++;
+                }
+            }
+
+            NoTestingVectorsTxtBox.Text = noVectors.ToString();
+
+            testingFeatures = Accord.Statistics.Tools.ZScores(testingFeatures);
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            double[] gammas = new double[5] {0.04, 0.08, 0.2, 0.4, 0.8 };
+            double[] ctable = new double[4] { 0.5, 1, 5, 20 };
+           
+
+            foreach (var item in gammas)
+            {
+                foreach (var item3 in ctable)
+                {
+                    TrainSVM(item, item3);
+                }
+            }
+
+            using (StreamWriter sw = new StreamWriter("D:/learning_report.txt"))
+            {
+                sw.Write(sb);
+            }
+
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            int noVectors = features.Length;
+            double[][] vectorsPositive = new double[noVectors/2][];
+            double[][] vectorsNegative = new double[noVectors / 2][];
+            int[] outputsPositive = new int[noVectors / 2];
+            int[] outputsNegative = new int[noVectors / 2];
+
+            int indPos = 0;
+            int indNeg = 0;
+            for (int i = 0; i < noVectors; i++)
+            {
+                if (outputs[i] == 1)
+                {
+                    vectorsPositive[indPos] = features[i];
+                    outputsPositive[indPos] = outputs[i];
+                    indPos++;
+                }
+                else
+                {
+                    vectorsNegative[indNeg] = features[i];
+                    outputsNegative[indNeg] = outputs[i];
+                    indNeg++;
+                }
+
+            }
+
+            double threshold = 0.1;
+            int cnt = 0;
+
+            for (int i = 0; i < vectorsPositive.Length; i++)
+            {
+                for (int j = 0; j < vectorsNegative.Length; j++)
+                {
+                    double distance = Distance.SquareEuclidean(vectorsPositive[i], vectorsNegative[j]);
+                    if (distance<threshold)
+                    {
+                        cnt++;
+                        Console.WriteLine(i.ToString()+" and  " + j.ToString()+" - similarity: "+distance.ToString());
+                        foreach (var item in vectorsPositive[i])
+                        {
+                            Console.Write(item.ToString()+";");
+                        }
+                        Console.WriteLine();
+
+                        foreach (var item in vectorsNegative[i])
+                        {
+                            Console.Write(item.ToString() + ";");
+                        }
+                        Console.WriteLine();
+                    }
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("No similar samples:" + cnt.ToString());
+        }
+
+        
     }
 }

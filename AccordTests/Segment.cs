@@ -11,10 +11,12 @@ namespace AccordTests
 {
     class Segment
     {
-        public Segment(MyRGB color, Point point)
+        public Segment(MyRGB color, Point point, int imageHeight, int imageWidth)
         {
             Color = color;
             Point = point;
+            this.imageWidth = imageWidth;
+            this.imageHeight = imageHeight;
         }
 
         public double[] FeatureVec = new double[8];
@@ -22,10 +24,14 @@ namespace AccordTests
         public MyRGB Color { get; set; }
         public Point Point { get; set; }
 
+
         public Pixel[] Pixels { get; set; }
         public int currPixInd { get; set; }
 
         public MaskTypes MaskType { get; set; }
+
+        private int imageHeight;
+        private int imageWidth;
 
 
         public void CreatePixelsArr(int pixNo)
@@ -46,8 +52,8 @@ namespace AccordTests
             FeatureVec[4] = variance[1];
             FeatureVec[5] = variance[2];
 
-            FeatureVec[6] = Point.X;
-            FeatureVec[7] = Point.Y;          
+            FeatureVec[6] = (double)Point.X / imageHeight;
+            FeatureVec[7] = (double)Point.Y / imageWidth;          
         }
 
         double[] GetVariance()
